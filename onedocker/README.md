@@ -9,13 +9,12 @@
 
 ## Steps
 1. Clone the github repository
-  * `Git clone https://github.com/facebookresearch/FBPCS.git`
+  * `git clone https://github.com/facebookresearch/FBPCS.git`
 2. Change directory to onedocker
   * `cd FBPCS/onedocker`
 3. Build docker image
   * `docker build . -t <docker_image_name>`
-4. Tag the docker image (use `docker images` to get the image id)
-  * `docker tag <image_id> <ECR_url>`
-6. Push the image to ECR
-  * `docker push <ECR_url>`
+4. [Push image to ECR](https://docs.aws.amazon.com/AmazonECR/latest/userguide/docker-push-ecr-image.html)
+
+
 
