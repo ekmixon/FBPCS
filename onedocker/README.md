@@ -1,3 +1,3 @@
-# How to build an OneDocker Production Image
-| :point_down:  This is very important   |
+# How to build an OneDocker Image
+| :point_down:  Make sure the prerequsites are installed |
 |-----------------------------------------|
