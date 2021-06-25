@@ -1,3 +1,3 @@
 # How to build an OneDocker Production Image
-| :exclamation:  This is very important   |
+| :point_down:  This is very important   |
 |-----------------------------------------|
