@@ -14,7 +14,7 @@
   * `cd FBPCS/onedocker`
 3. Build docker image
   * `docker build . -t <docker_image_name>`
-4. [Push image to ECR](https://docs.aws.amazon.com/AmazonECR/latest/userguide/docker-push-ecr-image.html)
+4. [Push images to ECR](https://docs.aws.amazon.com/AmazonECR/latest/userguide/docker-push-ecr-image.html)
 
 
 
