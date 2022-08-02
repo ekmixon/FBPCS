@@ -78,10 +78,11 @@ class S3StorageService(StorageService):
 
                     self.copy_dir(
                         source_s3_path.bucket,
-                        source_s3_path.key + "/",
+                        f"{source_s3_path.key}/",
                         dest_s3_path.bucket,
                         dest_s3_path.key,
                     )
+
                 else:
                     self.s3_gateway.copy(
                         source_s3_path.bucket,
@@ -89,28 +90,22 @@ class S3StorageService(StorageService):
                         dest_s3_path.bucket,
                         dest_s3_path.key,
                     )
+            elif source.endswith("/"):
+                if not recursive:
+                    raise ValueError(
+                        f"Source {source} is a folder. Use --recursive"
+                    )
+                self.download_dir(source_s3_path.bucket, f"{source_s3_path.key}/", destination)
             else:
-                # from S3 to local
-                if source.endswith("/"):
-                    if not recursive:
-                        raise ValueError(
-                            f"Source {source} is a folder. Use --recursive"
-                        )
-                    self.download_dir(
-                        source_s3_path.bucket,
-                        source_s3_path.key + "/",
-                        destination,
-                    )
-                else:
-                    self.s3_gateway.download_file(
-                        source_s3_path.bucket, source_s3_path.key, destination
-                    )
+                self.s3_gateway.download_file(
+                    source_s3_path.bucket, source_s3_path.key, destination
+                )
 
     def upload_dir(self, source: str, s3_path_bucket: str, s3_path_key: str) -> None:
         for root, dirs, files in os.walk(source):
             for file in files:
                 local_path = join(root, file)
-                destination_path = s3_path_key + "/" + relpath(local_path, source)
+                destination_path = f"{s3_path_key}/{relpath(local_path, source)}"
 
                 self.s3_gateway.upload_file(
                     local_path,
@@ -119,13 +114,9 @@ class S3StorageService(StorageService):
                 )
             for dir in dirs:
                 local_path = join(root, dir)
-                destination_path = s3_path_key + "/" + relpath(local_path, source)
+                destination_path = f"{s3_path_key}/{relpath(local_path, source)}"
 
-                self.s3_gateway.put_object(
-                    s3_path_bucket,
-                    destination_path + "/",
-                    "",
-                )
+                self.s3_gateway.put_object(s3_path_bucket, f"{destination_path}/", "")
 
     def download_dir(
         self, s3_path_bucket: str, s3_path_key: str, destination: str
@@ -136,7 +127,7 @@ class S3StorageService(StorageService):
             )
         keys = self.s3_gateway.list_object2(s3_path_bucket, s3_path_key)
         for key in keys:
-            local_path = normpath(destination + "/" + key[len(s3_path_key) :])
+            local_path = normpath(f"{destination}/{key[len(s3_path_key) :]}")
             if key.endswith("/"):
                 if not path.exists(local_path):
                     os.makedirs(local_path)
@@ -156,7 +147,7 @@ class S3StorageService(StorageService):
             )
         keys = self.s3_gateway.list_object2(source_bucket, source_key)
         for key in keys:
-            destination_path = destination_key + "/" + key[len(source_key) :]
+            destination_path = f"{destination_key}/{key[len(source_key) :]}"
             if key.endswith("/"):
                 self.s3_gateway.put_object(
                     source_bucket,
@@ -183,11 +174,10 @@ class S3StorageService(StorageService):
             raise ValueError("The file is not an s3 file")
 
     def file_exists(self, filename: str) -> bool:
-        if StorageService.path_type(filename) == PathType.S3:
-            s3_path = S3Path(filename)
-            return self.s3_gateway.object_exists(s3_path.bucket, s3_path.key)
-        else:
+        if StorageService.path_type(filename) != PathType.S3:
             raise ValueError(f"File {filename} is not an S3 filepath")
+        s3_path = S3Path(filename)
+        return self.s3_gateway.object_exists(s3_path.bucket, s3_path.key)
 
     def get_file_info(self, filename: str) -> Dict[str, Any]:
         """Show file information (last modified time, type and size)

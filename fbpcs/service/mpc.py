@@ -191,12 +191,13 @@ class MPCService:
 
     def stop_instance(self, instance_id: str) -> MPCInstance:
         instance = self.instance_repository.read(instance_id)
-        container_ids = [instance.instance_id for instance in instance.containers]
-        if container_ids:
+        if container_ids := [
+            instance.instance_id for instance in instance.containers
+        ]:
             errors = self.onedocker_svc.stop_containers(container_ids)
-            error_msg = list(filter(lambda _: _[1], zip(container_ids, errors)))
-
-            if error_msg:
+            if error_msg := list(
+                filter(lambda _: _[1], zip(container_ids, errors))
+            ):
                 self.logger.error(
                     f"We encountered errors when stopping containers: {error_msg}"
                 )

@@ -31,9 +31,5 @@ class S3Path:
         match = re.search("^https?:/([^.]+).s3.([^.]+).amazonaws.com/(.*)$", fileURL)
         if not match:
             raise ValueError(f"Could not parse {fileURL} as an S3Path")
-        bucket, region, key = (
-            match.group(1).strip("/"),
-            match.group(2),
-            match.group(3).strip("/"),
-        )
+        bucket, region, key = match[1].strip("/"), match[2], match[3].strip("/")
         return (region, bucket, key)

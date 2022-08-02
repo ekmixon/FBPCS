@@ -35,10 +35,7 @@ class StorageService(abc.ABC):
 
     @staticmethod
     def path_type(filename: str) -> PathType:
-        if filename.startswith("https:"):
-            return PathType.S3
-
-        return PathType.Local
+        return PathType.S3 if filename.startswith("https:") else PathType.Local
 
     @abc.abstractmethod
     def get_file_size(self, filename: str) -> int:

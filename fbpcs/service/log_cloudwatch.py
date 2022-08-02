@@ -35,4 +35,4 @@ class CloudWatchLogService(LogService):
         )
 
     def get_log_path(self, container_instance: ContainerInstance) -> str:
-        return self.log_group[1:] + "/" + container_instance.instance_id.split("/")[-1]
+        return f"{self.log_group[1:]}/" + container_instance.instance_id.split("/")[-1]

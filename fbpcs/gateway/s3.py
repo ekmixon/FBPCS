@@ -89,9 +89,7 @@ class S3Gateway:
 
         key_list = []
         for page in pages:
-            for content in page["Contents"]:
-                key_list.append(content["Key"])
-
+            key_list.extend(content["Key"] for content in page["Contents"])
         return key_list
 
     @error_handler
